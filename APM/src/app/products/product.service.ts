@@ -11,7 +11,7 @@ export class ProductService {
 
     private _productUrl;
 
-    constructor(private _http: HttpClient){
+    constructor(private _http: HttpClient) {
         this._productUrl = './api/products/products.json';
     }
 
