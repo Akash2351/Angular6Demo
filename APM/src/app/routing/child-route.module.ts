@@ -10,9 +10,9 @@ import { ProductDetailComponent } from '../products/product-detail.component';
     CommonModule,
     RouterModule.forChild([
       { path: 'products', component: ProductListComponent },
-      { path: 'products/:id', 
-      canActivate: [ ProductGuardService], 
-      component: ProductDetailComponent }, 
+      { path: 'products/:id',
+      canActivate: [ ProductGuardService],
+      component: ProductDetailComponent },
     ]),
   ],
   declarations: [],
