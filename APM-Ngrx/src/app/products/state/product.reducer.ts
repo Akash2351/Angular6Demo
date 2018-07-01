@@ -1,7 +1,7 @@
-import { Product } from '../product';
-import * as fromRoot from '../../state/app.state';
-import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { ProductActions, ProductActionTypes } from './product.actions';
+import { Product } from "../product";
+import * as fromRoot from "../../state/app.state";
+import { createFeatureSelector, createSelector } from "@ngrx/store";
+import { ProductActions, ProductActionTypes } from "./product.actions";
 
 export interface State extends fromRoot.State {
   products: ProductState;
@@ -18,11 +18,11 @@ const initialState: ProductState = {
   showProductCode: true,
   currentProduct: null,
   products: [],
-  error: ''
+  error: ""
 };
 
 // Selector functions
-const getProductFeatureState = createFeatureSelector<ProductState>('products');
+const getProductFeatureState = createFeatureSelector<ProductState>("products");
 
 export const getShowProductCode = createSelector(
   getProductFeatureState,
@@ -37,6 +37,11 @@ export const getCurrentProduct = createSelector(
 export const getProducts = createSelector(
   getProductFeatureState,
   state => state.products
+);
+
+export const getError = createSelector(
+  getProductFeatureState,
+  state => state.error
 );
 
 export function reducer(
@@ -74,6 +79,20 @@ export function reducer(
           description: '',
           starRating: 0
         }
+      };
+
+    case ProductActionTypes.LoadSuccess:
+      return {
+        ...state,
+        products: action.payload,
+        error: ''
+      };
+
+    case ProductActionTypes.LoadFail:
+      return {
+        ...state,
+        products: [],
+        error: action.payload
       };
 
     default:

@@ -19,6 +19,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 /* Feature Modules */
 import { UserModule } from './user/user.module';
 import { environment } from '../environments/environment.prod';
+import { EffectsModule } from '@ngrx/effects';
 
 @NgModule({
   imports: [
@@ -34,7 +35,8 @@ import { environment } from '../environments/environment.prod';
         maxAge: 25,
         logOnly: environment.production
       }
-    )
+    ),
+    EffectsModule.forRoot([])
   ],
   declarations: [
     AppComponent,
