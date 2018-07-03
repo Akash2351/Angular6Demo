@@ -12,7 +12,6 @@ describe("HeroesComponent deep tests", () => {
   let mockHeroService;
   let HEROES;
 
-
   beforeEach(() => {
     HEROES = [
       { id: 1, name: "SpiderMan", strength: 8 },
@@ -26,7 +25,7 @@ describe("HeroesComponent deep tests", () => {
     ]);
     TestBed.configureTestingModule({
       declarations: [HeroesComponent, HeroComponent],
-       schemas: [NO_ERRORS_SCHEMA],
+      schemas: [NO_ERRORS_SCHEMA],
       providers: [
         {
           provide: HeroService,
@@ -35,7 +34,6 @@ describe("HeroesComponent deep tests", () => {
       ]
     });
     fixture = TestBed.createComponent(HeroesComponent);
-
   });
 
   it("should render each hero as a HeroComponent", () => {
@@ -43,11 +41,63 @@ describe("HeroesComponent deep tests", () => {
     //run ngOnInt
     fixture.detectChanges();
 
-   const heroComponentDEs = fixture.debugElement.queryAll(By.directive(HeroComponent));
+    const heroComponentDEs = fixture.debugElement.queryAll(
+      By.directive(HeroComponent)
+    );
     expect(heroComponentDEs.length).toBe(3);
-    heroComponentDEs.forEach((heroComp, index) =>{
+    heroComponentDEs.forEach((heroComp, index) => {
       expect(heroComp.componentInstance.hero.name).toEqual(HEROES[index].name);
-    })
+    });
   });
 
+  it("should call heroService.delete with correct hero object ", () => {
+    spyOn(fixture.componentInstance, "delete"); // watch n see if the method delete is called.
+    mockHeroService.getHeroes.and.returnValue(of(HEROES));
+    //run ngOnInt
+    fixture.detectChanges();
+
+    const heroComponentDEs = fixture.debugElement.queryAll(
+      By.directive(HeroComponent)
+    );
+    heroComponentDEs[0]
+      .query(By.css("button"))
+      .triggerEventHandler("click", { stopPropagation: () => {} }); //return obj with stopPropagation method on click.
+
+    expect(fixture.componentInstance.delete).toHaveBeenCalledWith(HEROES[0]);
+
+    //other way to doing the above thing
+    (<HeroComponent>heroComponentDEs[1].componentInstance).delete.emit(
+      undefined
+    );
+    expect(fixture.componentInstance.delete).toHaveBeenCalledWith(HEROES[1]);
+
+    //another way of doing the same
+    heroComponentDEs[2].triggerEventHandler('delete',null);
+    expect(fixture.componentInstance.delete).toHaveBeenCalledWith(HEROES[2]);
+  });
+
+  it('should add a new hero when hero list add button is clicked', ()=>{
+    mockHeroService.getHeroes.and.returnValue(of(HEROES));
+    //run ngOnInt
+    fixture.detectChanges();
+    const name = 'Mr. Ice';
+    mockHeroService.addHero.and.returnValue(of({ id:5, name: name, strength:4}));
+    const inputElement = fixture.debugElement.query(By.css('input')).nativeElement;
+    const addButton = fixture.debugElement.queryAll(By.css('button'))[0];
+
+    inputElement.value = name;
+    addButton.triggerEventHandler('click', null);
+    fixture.detectChanges();
+
+    const heroText = fixture.debugElement.query(By.css('ul')).nativeElement.textContent;
+    expect(heroText).toContain(name);
+
+
+
+
+
+
+
+
+  })
 });
